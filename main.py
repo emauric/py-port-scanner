@@ -1,6 +1,9 @@
 import socket
 import time
 import sys
+import threading
+
+print_lock = threading.Lock()
 
 def scan_ports(host_port):
     print(f"Scanning ports on {host_port}...")
@@ -24,14 +27,16 @@ def scan_ports(host_port):
         print("\n[!] Scan interrupted by user (Ctrl+C)")
         sys.exit()
 
-    except socket.gaierror:
-        print("\n[!] Hostname could not be resolved.")
-        sys.exit()
-
     except socket.error:
         print("\n[!] Couldn't connect to server.")
         sys.exit()
 
 if __name__ == "__main__":
-    target_host = input("Enter the host IP address: ")
+    target_page = input("Enter the host web address: ")
+    try:
+        target_host = socket.gethostbyname(target_page)
+    except socket.gaierror:
+        print("\n[!] Hostname could not be resolved.")
+        sys.exit()
+
     scan_ports(target_host)
